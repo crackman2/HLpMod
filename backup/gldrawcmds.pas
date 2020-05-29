@@ -40,6 +40,11 @@ begin
   ViewHeight := m_Viewport[3];
 end;
 
+
+
+{ -------------------- Draw Commands -------------------- }
+{ -> all draw commands need to convert using a formula    }
+{    }
 procedure TglDrawCmds.DrawLine(x1: single; y1: single; x2: single;
   y2: single); stdcall;
 var
@@ -83,11 +88,9 @@ var
 begin
   Convx := ViewWidth / 200;
   Convy := ViewHeight / 200;
-
-
   glPointSize(Thick);
   glBegin(GL_POINTS);
-  glVertex2f((x / Convx) - 100,(y / Convx) - 100);
+  glVertex2f((x / Convx) - 100,(y / Convy) - 100);
   glEnd();
 end;
 

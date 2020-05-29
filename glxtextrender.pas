@@ -368,6 +368,17 @@ procedure glxDrawString(x: Single; y: Single; Num: AnsiString; Scale:Single; Lef
 
 implementation
 
+
+{ ------------------ glxDrawNumber ------------------ }
+{ -> can only draw singed integers... havend tested   }
+{    unsigned ones.                                   }
+{ -> converts integer to string and compares each     }
+{    char in a case statement and maps it onto an     }
+{    array of defined characters. this array is used  }
+{    to define where the pixels go for each char      }
+{ -> this was the least shit method to draw text for  }
+{    me. hl.exe doesn't load freeglut and other       }
+{    like bitmaps were too tricky for me to grasp     }
 procedure glxDrawNumber(x: Single; y: Single; Num: integer; Scale:Cardinal); stdcall;
 var
   tmp: String;
@@ -398,13 +409,6 @@ begin
 
   CenterCorrection:= round(((Length(tmp)) * 4 * Scale)/2);
   CenterPositioning:=round((8*Scale)/2);
-
-
-
-
-  //glColor3f(0.8, 0.8, 0.8);
-
-
 
   for i := iInit to tmplen do
   begin
@@ -438,8 +442,6 @@ begin
         CurrentNumber:= 0;
     end;
 
-
-
     for dimPixY := 0 to 4 do
     begin
       for dimPixX := 0 to 3 do
@@ -459,6 +461,12 @@ begin
 
 end;
 
+
+{ ------------------ glxDrawString ------------------ }
+{ -> basically the same as glxDrawNumber but with way }
+{    more characters.                                 }
+{ -> tool used to define characters: https://github.com/MeteorTheLizard/AutoIt-OpenGL-Character-to-Array-Converter-for-Freepascal }
+{                                                     }
 procedure glxDrawString(x: Single; y: Single; Num: AnsiString; Scale:Single; LeftBound:Boolean); stdcall;
 var
   tmp: PChar;

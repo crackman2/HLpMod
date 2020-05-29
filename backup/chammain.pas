@@ -7,17 +7,18 @@ interface
 uses
   Classes, SysUtils, Windows;
 
-procedure ChamMain();stdcall;
+procedure ChamMainF();stdcall;
 
 implementation
 
-procedure ChamMain(); stdcall;
+procedure ChamMainF(); stdcall;
 begin
+
   MessageBox(0,'Chams','Chams',0);
 end;
 
 exports
-       ChamMain;
+       ChamMainF;
 
 end.
 

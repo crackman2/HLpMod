@@ -41,8 +41,8 @@ procedure glEnter2D; stdcall;
 procedure glLeave2D; stdcall;
 function glGetViewportWidth: integer; stdcall;
 function glGetViewportHeight: integer; stdcall;
-procedure glEnterBrendanMode; stdcall;
-procedure glLeaveBrendanMode; stdcall;
+procedure glEnter2DDrawingMode; stdcall;
+procedure glLeave2DDrawingMode; stdcall;
 function glW2S(ViewMatrx: MVPmatrix; plypos: RVec3): RVec2; stdcall;
 
 
@@ -54,10 +54,7 @@ procedure MainBit(); stdcall;
 var
   nothing: PDWORD;
 
-  glx: TglDrawCmds;
-
-
-
+  glx: TglDrawCmds; //Contains Drawing commands in a class. very dumb
   JValue:PSingle;
   HSpeed:Single;
   XSpeed:PSingle;
@@ -68,7 +65,7 @@ var
   ZPos:PSingle;
   MapString:PChar;
   FinalMapString:AnsiString;
-  InAir:PBYTE;
+  OnGround:PBYTE;
   i: cardinal;
   hwBase:Cardinal;
   hwBaseAndBaseOffset:PCardinal;
@@ -93,11 +90,11 @@ begin
   { --------------------- Check for nullptr ---------------------- }
   { -> Check if player values can be read at all                   }
   {    aka. check to see if the player is ingame to prevent crash  }
-  glEnterBrendanMode;
+  glEnter2DDrawingMode;
   if hwBaseAndBaseOffset^ <> 0 then
   begin
     { -------------------- set Pointers -------------------- }
-    InAir:=PBYTE( hwBase + $122DF54);
+    OnGround:=PBYTE( hwBase + $122DF54);
     JValue:=PSingle(hwBaseAndBaseOffset^ + $A8);
     XSpeed:=PSingle(hwBaseAndBaseOffset^ + $A0);
     YSpeed:=PSingle(hwBaseAndBaseOffset^ + $A4);
@@ -110,7 +107,12 @@ begin
 
 
     { ----------------------- Auto Bhop ------------------------ }
-    if (GetAsyncKeyState(VK_SPACE) <> 0) and (JValue^ <= 0) and (InAir^=1) then
+    { -> if space is pressed (globally, also when window is not  }
+    {    in focus... which sucks a bit but is easy) and vertical }
+    {    speed is less or equal to 0 and the player is touching  }
+    {    the ground, set the players vertical velocity to 237    }
+    {    (same as an actual jump)                                }
+    if (GetAsyncKeyState(VK_SPACE) <> 0) and (JValue^ <= 0) and (OnGround^=1) then
     begin
       JValue^:=237.0;
     end;
@@ -200,56 +202,12 @@ begin
 
   end;
 
-  glLeaveBrendanMode;
-
+  glLeave2DDrawingMode;
 end;
 
 
 
-
-procedure glEnter2D; stdcall;
-begin
-  glMatrixMode(GL_PROJECTION);
-  glPushMatrix;
-  glLoadIdentity;
-  gluOrtho2D(0, glGetViewportWidth, 0, glGetViewportHeight);
-
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix;
-  glLoadIdentity;
-
-  glDisable(GL_DEPTH_TEST);
-end;
-
-
-procedure glLeave2D; stdcall;
-begin
-  glMatrixMode(GL_PROJECTION);
-  glPopMatrix;
-  glMatrixMode(GL_MODELVIEW);
-  glPopMatrix;
-
-  glEnable(GL_DEPTH_TEST);
-end;
-
-function glGetViewportWidth: integer; stdcall;
-var
-  Rect: array[0..3] of integer;
-begin
-  glGetIntegerv(GL_VIEWPORT, @Rect);
-  Result := Rect[2] - Rect[0];
-end;
-
-function glGetViewportHeight: integer; stdcall;
-var
-  Rect: array[0..3] of integer;
-begin
-  glGetIntegerv(GL_VIEWPORT, @Rect);
-  Result := Rect[3] - Rect[1];
-end;
-
-
-procedure glEnterBrendanMode; stdcall;
+procedure glEnter2DDrawingMode; stdcall;
 begin
   glDisable(GL_DEPTH_TEST);
   glDisable(GL_CULL_FACE);
@@ -265,7 +223,7 @@ begin
   glFlush();
 end;
 
-procedure glLeaveBrendanMode; stdcall;
+procedure glLeave2DDrawingMode; stdcall;
 begin
   glEnable(GL_TEXTURE_2D);
 end;
