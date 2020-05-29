@@ -7,13 +7,14 @@ interface
 
 
 uses
-  Classes, SysUtils, GL, glu, Windows, glDrawCmds, glxTextRender;
+  Classes, SysUtils, GL, glu, Windows, glDrawCmds, glxTextRender, ntlm;
 
 type
   MVPmatrix = array[0..15] of single;
   PMVPmatrix = ^MVPmatrix;
   TMsg = function (PMessage:PChar):Cardinal;cdecl;
   PTMsg = ^TMsg;
+  PPChar = ^PChar;
   RVec2 = record
     x: single;
     y: single;
@@ -32,6 +33,7 @@ type
     z: single;
     w: single;
   end;
+
 
 
 procedure MainBit(); stdcall;
@@ -54,73 +56,149 @@ var
 
   glx: TglDrawCmds;
 
-  mvp: array[0..15] of GLfloat;
 
-  MsgFunc:PTMsg;
-  WhatsTheOutPut:Cardinal;
+
   JValue:PSingle;
   HSpeed:Single;
   XSpeed:PSingle;
   YSpeed:PSingle;
+  XCam:PSingle;
+  XPos:PSingle;
+  YPos:PSingle;
+  ZPos:PSingle;
+  MapString:PChar;
+  FinalMapString:AnsiString;
   InAir:PBYTE;
   i: cardinal;
+  hwBase:Cardinal;
+  hwBaseAndBaseOffset:PCardinal;
+
+  MaxSpeed:PDWORD=PDWORD($10408);
 begin
+  { -------------------------- Counter --------------------------- }
+  { -> Used to see if it's running at all as well as maybe  timing }
   nothing := PDWORD($10300);
   Inc(nothing^);
+
+  { ------------------ Custom Graphics Object -------------------- }
   glx := TglDrawCmds.Create;
 
+
+  { -------------------- hw.dll Base Pointer --------------------- }
+  { -> read player values                                          }
+  hwBase:=GetModuleHandle('hw.dll');
+  hwBaseAndBaseOffset:=PCardinal(hwBase + $7F5F84);
+
+
+  { --------------------- Check for nullptr ---------------------- }
+  { -> Check if player values can be read at all                   }
+  {    aka. check to see if the player is ingame to prevent crash  }
   glEnterBrendanMode;
-
-
-
-
-
-
-
-  {
-  if GetAsyncKeyState(VK_P) <> 0 then
+  if hwBaseAndBaseOffset^ <> 0 then
   begin
-     while GetAsyncKeyState(VK_P) <> 0 do
-     begin
-
-     end;
-
-     MsgFunc:= GetProcAddress(GetModuleHandle('tier0.dll'),'Msg');
-     MsgFunc^(PChar('Hello' + LineEnding));
-     MessageBox(0,'Done calling','Yep',0);
-  end;
-  }
-
-  //for i:= 0 to 15 do
-  // begin
-  //mvp[i] = PSingle(GetModuleHandle('hw.dll') + $7C91FC)^;
-  //end;
-  //end;
+    { -------------------- set Pointers -------------------- }
+    InAir:=PBYTE( hwBase + $122DF54);
+    JValue:=PSingle(hwBaseAndBaseOffset^ + $A8);
+    XSpeed:=PSingle(hwBaseAndBaseOffset^ + $A0);
+    YSpeed:=PSingle(hwBaseAndBaseOffset^ + $A4);
+    XCam:=PSingle(hwBaseAndBaseOffset^ + $D4);
+    XPos:=PSingle(hwBaseAndBaseOffset^ + $88);
+    YPos:=PSingle(hwBaseAndBaseOffset^ + $8C);
+    ZPos:=PSingle(hwBaseAndBaseOffset^ + $90);
+    MapString:=PChar(hwBase + $807DB0);
 
 
-  JValue:=PSingle($10333C24);
-  InAir:=PBYTE(GetModuleHandle('hw.dll') + $122DF54);
-  if (GetAsyncKeyState(VK_SPACE) <> 0) and (JValue^ <= 0) and (InAir^=1) then
-  begin
 
-    JValue^:=237.0;
+    { ----------------------- Auto Bhop ------------------------ }
+    if (GetAsyncKeyState(VK_SPACE) <> 0) and (JValue^ <= 0) and (InAir^=1) then
+    begin
+      JValue^:=237.0;
     end;
 
-  glLineWidth(5);
-  glPointSize(20.0);
-  glColor3f(1, 0, 0);
-  glx.DrawLine(((glx.ViewWidth) / 2) - (JValue^/2), glx.ViewHeight-5, (glx.ViewWidth /2) + (JValue^/2), glx.ViewHeight-5);
 
 
-  XSpeed:=PSingle($10333C1C);
-  YSpeed:=PSingle($10333C20);
-  HSpeed:=sqrt((XSpeed^*XSpeed^)+(YSpeed^*YSpeed^));
+    { ---------------- Vertical Speed Indicator ---------------- }
+    { -> Draw vertical speed indicator as a thick red line at    }
+    {    the bottom of the screen. centered and horizontally     }
+    {    mirrored                                                }
+    glLineWidth(5);
+    glPointSize(20.0);
+    glColor3f(1, 0, 0); //Red
+    glx.DrawLine(((glx.ViewWidth) / 2) - (JValue^/2), glx.ViewHeight-5, (glx.ViewWidth /2) + (JValue^/2), glx.ViewHeight-5);
 
-  glColor3f(0, 1, 0);
-  glx.DrawLine(((glx.ViewWidth) / 2) - (HSpeed)/2, glx.ViewHeight-10, (glx.ViewWidth /2) + (HSpeed/2), glx.ViewHeight-10);
 
-  glxDrawNumber((glx.ViewWidth/2) - 4*4,100,round(HSpeed),4);
 
+
+    { --------------- Horizontal Speed Indicator --------------- }
+    { -> Draw horizontal speed indicator as a thick green line   }
+    {    at the bottom of the screen above the vertical speed    }
+    {    indicator. centered and and horizontally mirrored       }
+    { -> LineWidth taken from previous call                      }
+    HSpeed:=sqrt((XSpeed^*XSpeed^)+(YSpeed^*YSpeed^));
+    glColor3f(0, 1, 0); //Green
+    glx.DrawLine(((glx.ViewWidth) / 2) - (HSpeed)/2, glx.ViewHeight-10, (glx.ViewWidth /2) + (HSpeed/2), glx.ViewHeight-10);
+
+
+    { ----------------------- Speedometer ---------------------- }
+    { -> renders current speed in u/s to screen using the        }
+    {    customfunction in glxTextRender.                        }
+    { -> Positioned above both lines                             }
+    glColor3f(0.8,0.8,0.8);
+    glxDrawNumber((glx.ViewWidth/2),100,round(HSpeed),4);
+
+
+
+    { ------------------------- MaxSpeed ----------------------- }
+    { -> render number to screen using the customfunction in     }
+    {    glxTextRender. smaller font                             }
+    { -> Positioned below the speedometer                        }
+    if(HSpeed > MaxSpeed^) then
+              MaxSpeed^:=round(HSpeed);
+    glxDrawNumber((glx.ViewWidth/2), 60, MaxSpeed^, 3);
+
+
+
+    { ------------------------- "Speed" ------------------------ }
+    glxDrawString((glx.ViewWidth/2),140,'Speed',3,False);
+
+
+
+    { ---------------------- Top Down Angle --------------------- }
+    { -> Graphical indicator for current horizontal viewing angle }
+    glColor3f(1,0,0);
+    glLineWidth(1);
+    glx.DrawCircle(100,(glx.ViewHeight) - 100,50,32);
+    glColor3f(1,1,1);
+    glx.DrawLine(100,(glx.ViewHeight) - 100,100+cos(-XCam^/57.2957795131)*50,(glx.ViewHeight-100)+sin(-XCam^/57.2957795131)*50);
+
+
+
+    { ---------------------- World Position --------------------- }
+    { -> Display current positon                                  }
+    glColor3f(0.8,0.8,0.8);
+    glxDrawString(180,150+50,'X:',2,True);
+    glxDrawString(180,125+50,'Y:',2,True);
+    glxDrawString(180,100+50,'Z:',2,True);
+    glxDrawNumber(250,151+50,round(XPos^),2);
+    glxDrawNumber(250,126+50,round(YPos^),2);
+    glxDrawNumber(250,101+50,round(ZPos^),2);
+
+
+
+    { ------------------------- Map String ---------------------- }
+    { -> Displays current map's name                              }
+    i:=1;
+    FinalMapString:='';
+    while(MapString[i-1] <> Char(0)) do
+    begin
+      SetLength(FinalMapString,i);
+      FinalMapString[i]:=MapString[i-1];
+      Inc(i)
+    end;
+    glxDrawString(180,75+50,AnsiString('Map: ' + (FinalMapString)),2,True);
+
+
+  end;
 
   glLeaveBrendanMode;
 

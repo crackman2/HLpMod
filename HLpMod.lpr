@@ -3,7 +3,7 @@ library HLpMod;
 {$mode objfpc}{$H+}
 
 uses
-  Classes, OGLHookMaker, Main, glDrawCmds, glxTextRender
+  Classes, OGLHookMaker, Main, glDrawCmds, glxTextRender, ChamHookMaker, ChamMain
   { you can add units after this };
 
 var
@@ -12,5 +12,6 @@ var
 begin
   hook:=TOGLHookMaker.Create;
   hook.CreateHook();
+  HookglDrawElements();
 end.
 

@@ -26,7 +26,7 @@
       <FormatVersion Value="2"/>
       <Modes Count="0"/>
     </RunParams>
-    <Units Count="6">
+    <Units Count="8">
       <Unit0>
         <Filename Value="HLpMod.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -56,6 +56,16 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="glxTextRender"/>
       </Unit5>
+      <Unit6>
+        <Filename Value="chamhookmaker.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="ChamHookMaker"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="chammain.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="ChamMain"/>
+      </Unit7>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -69,6 +79,7 @@
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <CodeGeneration>
+      <SmartLinkUnit Value="True"/>
       <RelocatableUnit Value="True"/>
       <TargetOS Value="win32"/>
     </CodeGeneration>
@@ -80,6 +91,11 @@
         <ExecutableType Value="Library"/>
       </Options>
     </Linking>
+    <Other>
+      <Verbosity>
+        <ShowHints Value="False"/>
+      </Verbosity>
+    </Other>
   </CompilerOptions>
   <Debugging>
     <Exceptions Count="3">

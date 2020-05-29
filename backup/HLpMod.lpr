@@ -3,7 +3,7 @@ library HLpMod;
 {$mode objfpc}{$H+}
 
 uses
-  Classes, OGLHookMaker, Main, glDrawCmds
+  Classes, OGLHookMaker, Main, glDrawCmds, glxTextRender, ChamHookMaker, ChamMain
   { you can add units after this };
 
 var
