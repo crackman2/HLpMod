@@ -29,7 +29,7 @@ var
   OGLBase: DWORD;
   SwapBuff: DWORD;
   CodeCave: DWORD;
-  Garbage: PDWORD = PDWORD(0);
+  Garbage: DWORD = 0;
 begin
   OGLBase := GetModuleHandle('OPENGL32.dll');
   {/////////////////////////////////////////}

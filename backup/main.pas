@@ -37,15 +37,10 @@ type
 
 
 procedure MainBit(); stdcall;
-procedure glEnter2D; stdcall;
-procedure glLeave2D; stdcall;
-function glGetViewportWidth: integer; stdcall;
-function glGetViewportHeight: integer; stdcall;
 procedure glEnter2DDrawingMode; stdcall;
 procedure glLeave2DDrawingMode; stdcall;
 function glW2S(ViewMatrx: MVPmatrix; plypos: RVec3): RVec2; stdcall;
-
-
+procedure DrawKeyPresses(hwBase:DWORD;glx:PTglDrawCmds);stdcall;
 
 
 implementation
@@ -107,15 +102,27 @@ begin
 
 
     { ----------------------- Auto Bhop ------------------------ }
-    { -> if space is pressed (globally, also when window is not  }
-    {    in focus... which sucks a bit but is easy) and vertical }
+    { -> if space is pressed (ingame) and vertical               }
     {    speed is less or equal to 0 and the player is touching  }
     {    the ground, set the players vertical velocity to 237    }
     {    (same as an actual jump)                                }
-    if (GetAsyncKeyState(VK_SPACE) <> 0) and (JValue^ <= 0) and (OnGround^=1) then
+    { -> hw.dll + $1009D48 is 4 bytes. if its 2 the spacebar is   }
+    {    pressed                                                 }
+    if (PDWORD(hwBase + $AB3A60)^>0) and (JValue^ <= 0) and (OnGround^=1) then
     begin
       JValue^:=237.0;
     end;
+
+    { -------------------- Reset Max Speed --------------------- }
+    { -> resets the maximum speed recorded back to 0 when 'R' is }
+    {    pressed                                                 }
+    { -> hw.dll+AB3AA8 is 1 when R is pressed and 0 when it's not}
+    { -> hw.dll+AB3A6C is C                                      }
+    if (PDWORD(hwBase + $AB3A6C)^>0) then begin
+      PDWORD($10408)^:=0;
+    end;
+
+
 
 
 
@@ -161,7 +168,7 @@ begin
 
 
     { ------------------------- "Speed" ------------------------ }
-    glxDrawString((glx.ViewWidth/2),140,'Speed',3,False);
+    //glxDrawString((glx.ViewWidth/2),140,'Speed',3,False);
 
 
 
@@ -178,12 +185,12 @@ begin
     { ---------------------- World Position --------------------- }
     { -> Display current positon                                  }
     glColor3f(0.8,0.8,0.8);
-    glxDrawString(180,150+50,'X:',2,True);
-    glxDrawString(180,125+50,'Y:',2,True);
-    glxDrawString(180,100+50,'Z:',2,True);
-    glxDrawNumber(250,151+50,round(XPos^),2);
-    glxDrawNumber(250,126+50,round(YPos^),2);
-    glxDrawNumber(250,101+50,round(ZPos^),2);
+    glxDrawString(180,150-50,'X:',2,True);
+    glxDrawString(180,125-50,'Y:',2,True);
+    glxDrawString(180,100-50,'Z:',2,True);
+    glxDrawNumber(250,151-50,round(XPos^),2);
+    glxDrawNumber(250,126-50,round(YPos^),2);
+    glxDrawNumber(250,101-50,round(ZPos^),2);
 
 
 
@@ -200,9 +207,58 @@ begin
     glxDrawString(180,75+50,AnsiString('Map: ' + (FinalMapString)),2,True);
 
 
+    { --------------------- Draw Pressed Keys ------------------- }
+    { -> Draw PressedKeys WASD, Space, LCTRL, E                   }
+    DrawKeyPresses(hwBase,@glx);
+
+
   end;
 
   glLeave2DDrawingMode;
+end;
+
+procedure DrawKeyPresses(hwBase: DWORD; glx:PTglDrawCmds); stdcall;
+var
+  MainPosX:Single=150;
+  MainPosY:Single=100;
+  BoxWidth:Single=50;
+  BoxHeight:Single=50;
+begin
+  MainPosX:=glx^.ViewWidth-MainPosX;
+  MainPosY:=glx^.ViewHeight-MainPosY;
+
+  glColor3f(0.8,0.8,0.8);
+    glx^.DrawBoxAlt(MainPosX,MainPosY-BoxHeight,BoxWidth,BoxHeight);    //W
+    glx^.DrawBoxAlt(MainPosX,MainPosY,BoxWidth,BoxHeight);              //S
+    glx^.DrawBoxAlt(MainPosX+BoxWidth,MainPosY,BoxWidth,BoxHeight);     //A
+    glx^.DrawBoxAlt(MainPosX-BoxWidth,MainPosY,BoxWidth,BoxHeight);     //D
+    glx^.DrawBoxAlt(MainPosX+BoxWidth,MainPosY-BoxHeight,BoxWidth,BoxHeight);    //E
+
+
+    if PDWORD(hwBase + $AB3ABC)^>0 then begin //W
+      glxDrawString(MainPosX+BoxWidth/2,(glx^.ViewHeight-MainPosY)+BoxWidth/3,'W',3,False);
+    end;
+
+    if PDWORD(hwBase + $AB3AAC)^>0 then begin //S
+      glxDrawString(MainPosX+BoxWidth/2,(glx^.ViewHeight-MainPosY)-BoxWidth/1.5,'S',3,False);
+    end;
+
+    if PDWORD(hwBase + $AB3A64)^>0 then begin //A
+      glxDrawString(MainPosX-BoxWidth/2,(glx^.ViewHeight-MainPosY)-BoxWidth/1.5,'A',3,False);
+    end;
+
+    if PDWORD(hwBase + $AB3A70)^>0 then begin //D
+      glxDrawString(MainPosX+BoxWidth*1.5,(glx^.ViewHeight-MainPosY)-BoxWidth/1.5,'D',3,False);
+    end;
+
+    if PDWORD(hwBase + $AB3A74)^>0 then begin //E
+      glxDrawString(MainPosX+BoxWidth+(BoxWidth/2),(glx^.ViewHeight-MainPosY)+BoxWidth/3,'E',3,False);
+    end;
+
+    if PDWORD(hwBase + $AB3960)^>0 then begin
+      glxDrawString(MainPosX+BoxWidth/2,(glx^.ViewHeight-MainPosY)-BoxWidth*1.5,'Space',3,False);
+    end;
+
 end;
 
 
@@ -258,6 +314,8 @@ begin
 
   Result := pycord;
 end;
+
+
 
 exports
   MainBit;

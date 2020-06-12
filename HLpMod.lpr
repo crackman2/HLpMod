@@ -3,13 +3,17 @@ library HLpMod;
 {$mode objfpc}{$H+}
 
 uses
-  Classes, OGLHookMaker, Main, glDrawCmds, glxTextRender, ChamHookMaker, ChamMain
+  Classes, OGLHookMaker
   { you can add units after this };
 
 var
   hook:TOGLHookMaker;
 
 begin
+  //if GetModuleHandle('freeglut.dll') = 0 then begin
+    // LoadLibrary('freeglut.dll');
+  //end;
+
   { ------------------ wglSwapBuffers ----------------- }
   { ----------------------- wtf? -----------------------}
   { -> the reason there is an object for the first hook }
@@ -22,6 +26,6 @@ begin
   { ------------------- glDrawElements ---------------- }
   { -> this one doesn't do anything because             }
   {    glDrawElements is never called by HL             }
-  HookglDrawElements();
+ // HookglDrawElements();
 end.
 

@@ -111,7 +111,7 @@ begin
 end;
 
 end.
-{ ------------ Doc ------------
+{ ------------------------ Doc ------------------------
  OPENGL32.glDrawElements
                         Original:
                                  OPENGL32.glDrawElements - 64 A1 18000000        - mov eax,fs:[00000018] { 24 }

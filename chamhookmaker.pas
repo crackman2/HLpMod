@@ -114,7 +114,7 @@ end.
 { ------------------------ Doc ------------------------
  OPENGL32.glDrawElements
                         Original:
-                                 OPENGL32.glDrawElements - 64 A1 18000000        - mov eax,fs:[00000018] { 24 }
+                                 OPENGL32.glDrawElements - 64 A1 18000000        - mov eax,fs:[00000018]
 
                         Replace:
                                  OPENGL32.glDrawElements - E9 B2E50900           - jmp OPENGL32.dll+A051B
@@ -126,7 +126,7 @@ CodeCave (Opengl32.dll + A051B):
                                  OPENGL32.dll+A051D - E8 DEFA0ECE           - call HLpMod.dll
                                  OPENGL32.dll+A0522 - 9D                    - popfd
                                  OPENGL32.dll+A0523 - 61                    - popad
-                                 OPENGL32.dll+A0524 - 64 A1 18000000        - mov eax,fs:[00000018] { 24 }
+                                 OPENGL32.dll+A0524 - 64 A1 18000000        - mov eax,fs:[00000018]
                                  OPENGL32.dll+A052A - E9 3A1AF6FF           - jmp OPENGL32.glDrawElements+5
 
 

@@ -16,8 +16,11 @@ type
   TglDrawCmds = class
     constructor Create;
     procedure DrawLine(x1: single; y1: single; x2: single; y2: single); stdcall;
+    procedure DrawBox(left:single; top:single; right:single; bottom:single);stdcall;
+    procedure DrawBoxAlt(x:single;y:single;width:single;height:single);stdcall;
     procedure SetPixel(x:Integer; y:Integer; Thick:Single);stdcall;
     procedure DrawCircle(x: single; y: single; radius: single; detail:Cardinal); stdcall;
+
 
   public
     ViewWidth: cardinal;
@@ -25,6 +28,7 @@ type
   end;
 
   ArrGLint = array[0..3] of GLint;
+  PTglDrawCmds = ^TglDrawCmds;
 
 
 implementation
@@ -61,6 +65,22 @@ begin
   glVertex2F((x1 / Convx) - 100, -((y1 / Convy) - 100));
   glVertex2F((x2 / Convx) - 100, -((y2 / Convy) - 100));
   glEnd();
+end;
+
+procedure TglDrawCmds.DrawBox(left: single; top: single; right: single;
+  bottom: single); stdcall;
+begin
+  DrawLine(left,top,left,bottom);
+  DrawLine(left,top,right,top);
+  DrawLine(right,top,right,bottom);
+  DrawLine(left,bottom,right,bottom);
+
+end;
+
+procedure TglDrawCmds.DrawBoxAlt(x: single; y: single; width: single;
+  height: single); stdcall;
+begin
+  DrawBox(x,y,x+width,y+height);
 end;
 
 
