@@ -7,7 +7,7 @@ interface
 
 
 uses
-  Classes, SysUtils, GL, glu, Windows, glDrawCmds, glxTextRender, ntlm;
+  Classes, SysUtils, GL, glu, Windows, glDrawCmds, glxTextRender, ntlm, strutils;
 
 type
   MVPmatrix = array[0..15] of single;
@@ -40,7 +40,8 @@ procedure MainBit(); stdcall;
 procedure glEnter2DDrawingMode; stdcall;
 procedure glLeave2DDrawingMode; stdcall;
 function glW2S(ViewMatrx: MVPmatrix; plypos: RVec3): RVec2; stdcall;
-procedure DrawKeyPresses(hwBase:DWORD;glx:PTglDrawCmds);stdcall;
+procedure DrawKeyPresses(Keys:AnsiString;glx:PTglDrawCmds);stdcall;
+
 
 
 implementation
@@ -64,8 +65,25 @@ var
   i: cardinal;
   hwBase:Cardinal;
   hwBaseAndBaseOffset:PCardinal;
-
   MaxSpeed:PDWORD=PDWORD($10408);
+
+  { ---- Key Input Stuff ---- }
+  KeyWord:PWord;
+  KeyStr:AnsiString;
+  //kAttack:Cardinal=1;
+  kJump:Cardinal=2;
+  //kDuck:Cardinal=3;
+  //kForward:Cardinal=4;
+  //kBack:Cardinal=5;
+  //kUse:Cardinal=6;
+  //kLeft:Cardinal=8;
+  //kRight:Cardinal=9;
+  //kMoveLeft:Cardinal=10;
+  //kMoveRight:Cardinal=11;
+  //kAttack2:Cardinal=12;
+  //kReload:Cardinal=14;
+  //kScore:Cardinal=16;
+
 begin
   { -------------------------- Counter --------------------------- }
   { -> Used to see if it's running at all as well as maybe  timing }
@@ -80,6 +98,12 @@ begin
   { -> read player values                                          }
   hwBase:=GetModuleHandle('hw.dll');
   hwBaseAndBaseOffset:=PCardinal(hwBase + $7F5F84);
+
+  { ------------------------- Key Input -------------------------- }
+  { -> Handles ingame commands to common keys to be used as input  }
+  {    here                                                        }
+  KeyWord:=PWord(hwBase+$1009D48);
+  KeyStr:=ReverseString(IntToBin(KeyWord^,16));
 
 
   { --------------------- Check for nullptr ---------------------- }
@@ -108,17 +132,16 @@ begin
     {    (same as an actual jump)                                }
     { -> hw.dll + $1009D48 is 4 bytes. if its 2 the spacebar is   }
     {    pressed                                                 }
-    if (PDWORD(hwBase + $AB3960)^>0) and (JValue^ <= 0) and (OnGround^=1) then
+    if (KeyStr[kJump] = '1') and (JValue^ <= 0) and (OnGround^=1) then
     begin
       JValue^:=237.0;
     end;
 
+
     { -------------------- Reset Max Speed --------------------- }
-    { -> resets the maximum speed recorded back to 0 when 'R' is }
-    {    pressed                                                 }
-    { -> hw.dll+AB3AA8 is 1 when R is pressed and 0 when it's not}
-    { -> hw.dll+AB3A6C is C                                      }
-    if (PDWORD(hwBase + $AB3A6C)^>0) then begin
+    { -> resets speed record when save game is loaded            }
+    { -> hw.dll + 135484 is 1 when game is loading               }
+    if (PDWORD(hwBase + $135484)^>0) then begin
       PDWORD($10408)^:=0;
     end;
 
@@ -209,7 +232,7 @@ begin
 
     { --------------------- Draw Pressed Keys ------------------- }
     { -> Draw PressedKeys WASD, Space, LCTRL, E                   }
-    DrawKeyPresses(hwBase,@glx);
+    DrawKeyPresses(KeyStr,@glx);
 
 
   end;
@@ -217,12 +240,26 @@ begin
   glLeave2DDrawingMode;
 end;
 
-procedure DrawKeyPresses(hwBase: DWORD; glx:PTglDrawCmds); stdcall;
+procedure DrawKeyPresses(Keys:AnsiString; glx:PTglDrawCmds); stdcall;
 var
   MainPosX:Single=150;
   MainPosY:Single=100;
   BoxWidth:Single=50;
   BoxHeight:Single=50;
+
+  //kAttack:Cardinal=1;
+  kJump:Cardinal=2;
+  //kDuck:Cardinal=3;
+  kForward:Cardinal=4;
+  kBack:Cardinal=5;
+  kUse:Cardinal=6;
+  //kLeft:Cardinal=8;
+  //kRight:Cardinal=9;
+  kMoveLeft:Cardinal=10;
+  kMoveRight:Cardinal=11;
+  //kAttack2:Cardinal=12;
+  //kReload:Cardinal=14;
+  //kScore:Cardinal=16;
 begin
   MainPosX:=glx^.ViewWidth-MainPosX;
   MainPosY:=glx^.ViewHeight-MainPosY;
@@ -235,32 +272,31 @@ begin
     glx^.DrawBoxAlt(MainPosX+BoxWidth,MainPosY-BoxHeight,BoxWidth,BoxHeight);    //E
 
 
-    if PDWORD(hwBase + $AB3ABC)^>0 then begin //W
+    if Keys[kForward] = '1' then begin //W
       glxDrawString(MainPosX+BoxWidth/2,(glx^.ViewHeight-MainPosY)+BoxWidth/3,'W',3,False);
     end;
 
-    if PDWORD(hwBase + $AB3AAC)^>0 then begin //S
+    if Keys[kBack] = '1' then begin //S
       glxDrawString(MainPosX+BoxWidth/2,(glx^.ViewHeight-MainPosY)-BoxWidth/1.5,'S',3,False);
     end;
 
-    if PDWORD(hwBase + $AB3A64)^>0 then begin //A
+    if Keys[kMoveLeft] = '1' then begin //A
       glxDrawString(MainPosX-BoxWidth/2,(glx^.ViewHeight-MainPosY)-BoxWidth/1.5,'A',3,False);
     end;
 
-    if PDWORD(hwBase + $AB3A70)^>0 then begin //D
+    if Keys[kMoveRight] = '1' then begin //D
       glxDrawString(MainPosX+BoxWidth*1.5,(glx^.ViewHeight-MainPosY)-BoxWidth/1.5,'D',3,False);
     end;
 
-    if PDWORD(hwBase + $AB3A74)^>0 then begin //E
+    if Keys[kUse] = '1' then begin //E
       glxDrawString(MainPosX+BoxWidth+(BoxWidth/2),(glx^.ViewHeight-MainPosY)+BoxWidth/3,'E',3,False);
     end;
 
-    if PDWORD(hwBase + $AB3960)^>0 then begin
+    if Keys[kJump] = '1' then begin
       glxDrawString(MainPosX+BoxWidth/2,(glx^.ViewHeight-MainPosY)-BoxWidth*1.5,'Space',3,False);
     end;
 
 end;
-
 
 
 procedure glEnter2DDrawingMode; stdcall;
