@@ -48,24 +48,38 @@ implementation
 
 procedure MainBit(); stdcall;
 var
+  { --- Counter/Debug --- }
   nothing: PDWORD;
 
+  { --- Custom Graphics --- }
   glx: TglDrawCmds; //Contains Drawing commands in a class. very dumb
+
+  { --- AutoBhop --- }
   JValue:PSingle;
+  OnGround:PBYTE;
+
+  { --- Velocity --- }
   HSpeed:Single;
   XSpeed:PSingle;
   YSpeed:PSingle;
+  MaxSpeed:PDWORD=PDWORD($10408);
+  LineScale:Single=6;
+
+  { --- Position/Angles --- }
   XCam:PSingle;
+  YCam:PSingle;
   XPos:PSingle;
   YPos:PSingle;
   ZPos:PSingle;
+
+  { --- Map Name --- }
   MapString:PChar;
   FinalMapString:AnsiString;
-  OnGround:PBYTE;
-  i: cardinal;
+
+  { --- Reading Memory --- }
   hwBase:Cardinal;
   hwBaseAndBaseOffset:PCardinal;
-  MaxSpeed:PDWORD=PDWORD($10408);
+
 
   { ---- Key Input Stuff ---- }
   KeyWord:PWord;
@@ -83,6 +97,10 @@ var
   //kAttack2:Cardinal=12;
   //kReload:Cardinal=14;
   //kScore:Cardinal=16;
+
+
+  { --- Loop Counter --- }
+  i: cardinal;
 
 begin
   { -------------------------- Counter --------------------------- }
@@ -118,6 +136,7 @@ begin
     XSpeed:=PSingle(hwBaseAndBaseOffset^ + $A0);
     YSpeed:=PSingle(hwBaseAndBaseOffset^ + $A4);
     XCam:=PSingle(hwBaseAndBaseOffset^ + $D4);
+    YCam:=PSingle(hwBaseAndBaseOffset^ + $F4);
     XPos:=PSingle(hwBaseAndBaseOffset^ + $88);
     YPos:=PSingle(hwBaseAndBaseOffset^ + $8C);
     ZPos:=PSingle(hwBaseAndBaseOffset^ + $90);
@@ -138,14 +157,13 @@ begin
     end;
 
 
+
     { -------------------- Reset Max Speed --------------------- }
     { -> resets speed record when save game is loaded            }
     { -> hw.dll + 135484 is 1 when game is loading               }
     if (PDWORD(hwBase + $135484)^>0) then begin
       PDWORD($10408)^:=0;
     end;
-
-
 
 
 
@@ -156,8 +174,7 @@ begin
     glLineWidth(5);
     glPointSize(20.0);
     glColor3f(1, 0, 0); //Red
-    glx.DrawLine(((glx.ViewWidth) / 2) - (JValue^/2), glx.ViewHeight-5, (glx.ViewWidth /2) + (JValue^/2), glx.ViewHeight-5);
-
+    glx.DrawLine(((glx.ViewWidth) / 2) - (JValue^/LineScale), glx.ViewHeight-5, (glx.ViewWidth /2) + (JValue^/LineScale), glx.ViewHeight-5);
 
 
 
@@ -168,7 +185,8 @@ begin
     { -> LineWidth taken from previous call                      }
     HSpeed:=sqrt((XSpeed^*XSpeed^)+(YSpeed^*YSpeed^));
     glColor3f(0, 1, 0); //Green
-    glx.DrawLine(((glx.ViewWidth) / 2) - (HSpeed)/2, glx.ViewHeight-10, (glx.ViewWidth /2) + (HSpeed/2), glx.ViewHeight-10);
+    glx.DrawLine(((glx.ViewWidth) / 2) - (HSpeed/LineScale), glx.ViewHeight-10, (glx.ViewWidth /2) + (HSpeed/LineScale), glx.ViewHeight-10);
+
 
 
     { ----------------------- Speedometer ---------------------- }
@@ -205,6 +223,25 @@ begin
 
 
 
+    { ------------------------ Side Angle ----------------------- }
+    { -> Graphical indicator for current vertical viewing angle   }
+    glColor3f(1,0,0);
+    glLineWidth(1);
+    glx.DrawCircle(75,(glx.ViewHeight) - 200,25,32);
+    glColor3f(1,1,1);
+    glx.DrawLine(75,(glx.ViewHeight) - 200,75+cos(YCam^/57.2957795131)*25,(glx.ViewHeight-200)+sin(YCam^/57.2957795131)*25);
+
+
+
+    { ----------------------- Angle Display --------------------- }
+    { -> Displays numerical viewing angle                         }
+    glColor3f(0.8,0.8,0.8);
+    glxDrawString(110,195,IntToStr(round(YCam^)),2,true);
+    glxDrawString(100,30,IntToStr(round(XCam^)),2,false);
+
+
+
+
     { ---------------------- World Position --------------------- }
     { -> Display current positon                                  }
     glColor3f(0.8,0.8,0.8);
@@ -230,9 +267,11 @@ begin
     glxDrawString(180,75+50,AnsiString('Map: ' + (FinalMapString)),2,True);
 
 
+
     { --------------------- Draw Pressed Keys ------------------- }
     { -> Draw PressedKeys WASD, Space, LCTRL, E                   }
     DrawKeyPresses(KeyStr,@glx);
+
 
 
   end;
@@ -248,8 +287,8 @@ var
   BoxHeight:Single=50;
 
   //kAttack:Cardinal=1;
-  //kJump:Cardinal=2;
-  //kDuck:Cardinal=3;
+  kJump:Cardinal=2;
+  kDuck:Cardinal=3;
   kForward:Cardinal=4;
   kBack:Cardinal=5;
   kUse:Cardinal=6;
@@ -294,6 +333,10 @@ begin
 
     if Keys[kJump] = '1' then begin
       glxDrawString(MainPosX+BoxWidth/2,(glx^.ViewHeight-MainPosY)-BoxWidth*1.5,'Space',3,False);
+    end;
+
+    if Keys[kDuck] = '1' then begin
+      glxDrawString(MainPosX-BoxWidth/2,(glx^.ViewHeight-MainPosY)-BoxWidth*1.5,'Ctrl',3,False);
     end;
 
 end;

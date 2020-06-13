@@ -11,7 +11,7 @@ uses
 
 
 var
-  Alphabet: array [0..39] of array[0..19] of
+  Alphabet: array [0..40] of array[0..19] of
   cardinal = (
   ///////////////
   (0, 1, 1, 0, //
@@ -281,7 +281,13 @@ var
    0, 1, 0, 1, //#9
    0, 1, 1, 1, //
    0, 0, 0, 1, //
-   0, 1, 1, 1)
+   0, 1, 1, 1),
+   ///////////////
+  (0, 0, 0, 0, //
+   0, 0, 0, 0, //#-
+   0, 1, 1, 1, //
+   0, 0, 0, 0, //
+   0, 0, 0, 0)//
   );
 
   Characters: array[0..11] of array[0..19] of
@@ -570,6 +576,8 @@ begin
         CurrentNumber:= 38;
       '9':
         CurrentNumber:= 39;
+      '-':
+        CurrentNumber:= 40;
 
       else
         CurrentNumber:= 29;
