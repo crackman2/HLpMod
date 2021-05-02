@@ -81,7 +81,7 @@ var
 begin
   PBYTE(Location + 00)^ := $60;//pushad
   PBYTE(Location + 01)^ := $9C;//pushfd
-  WriteJump(Location + 02, addMyFunc, True);
+  WriteJump(Location + 02, addMyFunc, True); //CALL
   PBYTE(Location + 07)^ := $9D;//popfd
   PBYTE(Location + 08)^ := $61;//popfd
   for i := 0 to 4 do

@@ -115,12 +115,12 @@ begin
   { -------------------- hw.dll Base Pointer --------------------- }
   { -> read player values                                          }
   hwBase:=GetModuleHandle('hw.dll');
-  hwBaseAndBaseOffset:=PCardinal(hwBase + $7F5F84);
+  hwBaseAndBaseOffset:=PCardinal(hwBase + $7F6304);
 
   { ------------------------- Key Input -------------------------- }
   { -> Handles ingame commands to common keys to be used as input  }
   {    here                                                        }
-  KeyWord:=PWord(hwBase+$1009D48);
+  KeyWord:=PWord(hwBase+$9CF548);
   KeyStr:=ReverseString(IntToBin(KeyWord^,16));
 
 
@@ -131,7 +131,7 @@ begin
   if hwBaseAndBaseOffset^ <> 0 then
   begin
     { -------------------- set Pointers -------------------- }
-    OnGround:=PBYTE( hwBase + $122DF54);
+    OnGround:=PBYTE( hwBase + $122E2D4);
     JValue:=PSingle(hwBaseAndBaseOffset^ + $A8);
     XSpeed:=PSingle(hwBaseAndBaseOffset^ + $A0);
     YSpeed:=PSingle(hwBaseAndBaseOffset^ + $A4);
@@ -140,7 +140,7 @@ begin
     XPos:=PSingle(hwBaseAndBaseOffset^ + $88);
     YPos:=PSingle(hwBaseAndBaseOffset^ + $8C);
     ZPos:=PSingle(hwBaseAndBaseOffset^ + $90);
-    MapString:=PChar(hwBase + $807DB0);
+    MapString:=PChar(hwBase + $808130);
 
 
 
@@ -274,6 +274,9 @@ begin
 
 
 
+  end else begin
+    MessageBox(0, 'Can''t read player values', 'Error', 0);
+    ExitProcess(0);
   end;
 
   glLeave2DDrawingMode;
@@ -332,11 +335,11 @@ begin
     end;
 
     if Keys[kJump] = '1' then begin
-      glxDrawString(MainPosX+BoxWidth/2,(glx^.ViewHeight-MainPosY)-BoxWidth*1.5,'Space',3,False);
+      glxDrawString(MainPosX+BoxWidth/2,(glx^.ViewHeight-MainPosY)-BoxWidth*1.5,'Jump',3,False);
     end;
 
     if Keys[kDuck] = '1' then begin
-      glxDrawString(MainPosX-BoxWidth/2,(glx^.ViewHeight-MainPosY)-BoxWidth*1.5,'Ctrl',3,False);
+      glxDrawString(MainPosX-BoxWidth,(glx^.ViewHeight-MainPosY)-BoxWidth*1.5,'Duck',3,False);
     end;
 
 end;

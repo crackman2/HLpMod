@@ -33,7 +33,7 @@ var
 begin
   OGLBase := GetModuleHandle('OPENGL32.dll');
   {/////////////////////////////////////////}
-  {///}Messagebox(0, PChar('OGLBase: 0x' + IntToHex(OGLBase, 8)), 'Base', 0);
+  {///}//Messagebox(0, PChar('OGLBase: 0x' + IntToHex(OGLBase, 8)), 'Base', 0);
   {///}{THIS IS REQUIRED FOR SOME REASON////}
   {/////////////////////////////////////////}
   CodeCave := OGLBase + $A0508;
