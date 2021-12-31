@@ -81,7 +81,7 @@ var
 begin
   PBYTE(Location + 00)^ := $60;//pushad
   PBYTE(Location + 01)^ := $9C;//pushfd
-  WriteJump(Location + 02, addMyFunc, True);
+  WriteJump(Location + 02, addMyFunc, True); //CALL
   PBYTE(Location + 07)^ := $9D;//popfd
   PBYTE(Location + 08)^ := $61;//popfd
   for i := 0 to 4 do
@@ -96,15 +96,15 @@ end;
 
 end.
 { --- Documentation ---}{
-wglSwapBuffers : OPENGL32.dll+45E21
+wglSwapBuffers : OPENGL32.dll+47C30
 
         Original:
-                 OPENGL32.dll+45E21 - 8B FF                 - mov edi,edi
-                 OPENGL32.dll+45E23 - 55                    - push ebp
-                 OPENGL32.dll+45E24 - 8B EC                 - mov ebp,esp
+                 OPENGL32.dll+47C30 - 8B FF                 - mov edi,edi
+                 OPENGL32.dll+47C33 - 55                    - push ebp
+                 OPENGL32.dll+47C34 - 8B EC                 - mov ebp,esp
 
         Replace:
-                 OPENGL32.dll+45E21 - E9 E2A60500           - jmp OPENGL32.dll+A0508 // jumpaddress = Jump_to - Jump_from
+                 OPENGL32.dll+47C30 - E9 E2A60500           - jmp OPENGL32.dll+A0508 // jumpaddress = Jump_to - Jump_from
 
 
 
@@ -121,7 +121,7 @@ Codecave       : OPENGL32.dll+A0508
                  OPENGL32.dll+A0511 - 8B FF                 - mov edi,edi
                  OPENGL32.dll+A0513 - 55                    - push ebp
                  OPENGL32.dll+A0514 - 8B EC                 - mov ebp,esp
-                 OPENGL32.dll+A0516 - E9 0B59FAFF           - jmp OPENGL32.dll+45E26
+                 OPENGL32.dll+A0516 - E9 0B59FAFF           - jmp OPENGL32.dll+47C36
 
 
 }

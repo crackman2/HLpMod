@@ -37,7 +37,7 @@ begin
   {///}{THIS IS REQUIRED FOR SOME REASON////}
   {/////////////////////////////////////////}
   CodeCave := OGLBase + $A0508;
-  Swapbuff := OGLBase + $45E21;
+  Swapbuff := OGLBase + $47C30;
 
 
   if (VirtualProtect(LPVOID(CodeCave), 30, PAGE_EXECUTE_WRITECOPY, Garbage) =
@@ -96,15 +96,15 @@ end;
 
 end.
 { --- Documentation ---}{
-wglSwapBuffers : OPENGL32.dll+45E21
+wglSwapBuffers : OPENGL32.dll+47C30
 
         Original:
-                 OPENGL32.dll+45E21 - 8B FF                 - mov edi,edi
-                 OPENGL32.dll+45E23 - 55                    - push ebp
-                 OPENGL32.dll+45E24 - 8B EC                 - mov ebp,esp
+                 OPENGL32.dll+47C30 - 8B FF                 - mov edi,edi
+                 OPENGL32.dll+47C33 - 55                    - push ebp
+                 OPENGL32.dll+47C34 - 8B EC                 - mov ebp,esp
 
         Replace:
-                 OPENGL32.dll+45E21 - E9 E2A60500           - jmp OPENGL32.dll+A0508 // jumpaddress = Jump_to - Jump_from
+                 OPENGL32.dll+47C30 - E9 E2A60500           - jmp OPENGL32.dll+A0508 // jumpaddress = Jump_to - Jump_from
 
 
 
@@ -121,7 +121,7 @@ Codecave       : OPENGL32.dll+A0508
                  OPENGL32.dll+A0511 - 8B FF                 - mov edi,edi
                  OPENGL32.dll+A0513 - 55                    - push ebp
                  OPENGL32.dll+A0514 - 8B EC                 - mov ebp,esp
-                 OPENGL32.dll+A0516 - E9 0B59FAFF           - jmp OPENGL32.dll+45E26
+                 OPENGL32.dll+A0516 - E9 0B59FAFF           - jmp OPENGL32.dll+47C36
 
 
 }
