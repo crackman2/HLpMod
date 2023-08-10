@@ -3,7 +3,7 @@ library HLpMod;
 {$mode objfpc}{$H+}
 
 uses
-  Classes, OGLHookMaker
+  Classes, OGLHookMaker, Main
   { you can add units after this };
 
 var
@@ -21,7 +21,7 @@ begin
   {    required to wrap them in a class. so yea...      }
   {    now i know though :) all in the name of learning }
   hook:=TOGLHookMaker.Create;
-  hook.CreateHook();
+  hook.CreateHook(@MainBit);
 
   { ------------------- glDrawElements ---------------- }
   { -> this one doesn't do anything because             }
