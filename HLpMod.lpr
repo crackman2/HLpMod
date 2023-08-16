@@ -20,6 +20,9 @@ begin
   {    is that i didn't know at the time that it wasn't }
   {    required to wrap them in a class. so yea...      }
   {    now i know though :) all in the name of learning }
+  { -> some injectors may want to call the exported     }
+  {    MainBit function directly, but this is fine.     }
+  {    either method should work                        }
   hook:=TOGLHookMaker.Create;
   hook.CreateHook(@MainBit);
 

@@ -37,7 +37,7 @@ implementation
 
 constructor TglDrawCmds.Create;
 var
-  m_Viewport: ArrGLint;
+  m_Viewport: ArrGLint = (0,0,0,0);
 begin
   glGetIntegerv(GL_VIEWPORT, m_Viewport);
   ViewWidth := m_Viewport[2];

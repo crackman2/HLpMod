@@ -82,10 +82,15 @@
       <SmartLinkUnit Value="True"/>
       <RelocatableUnit Value="True"/>
       <TargetOS Value="win32"/>
+      <Optimizations>
+        <OptimizationLevel Value="3"/>
+      </Optimizations>
+      <SmallerCode Value="True"/>
     </CodeGeneration>
     <Linking>
       <Debugging>
         <GenerateDebugInfo Value="False"/>
+        <StripSymbols Value="True"/>
       </Debugging>
       <Options>
         <ExecutableType Value="Library"/>

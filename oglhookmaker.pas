@@ -26,19 +26,12 @@ implementation
 
 procedure TOGLHookMaker.CreateHook(MainBit:Pointer); stdcall;
 var
-  //OGLBase: DWORD;
+
   SwapBuff: DWORD;
   CodeCave: DWORD;
   Garbage: DWORD = 0;
 begin
-  //OGLBase := GetModuleHandle('OPENGL32.dll');
-  {/////////////////////////////////////////}
-  {///}//Messagebox(0, PChar('OGLBase: 0x' + IntToHex(OGLBase, 8)), 'Base', 0);
-  {///}{THIS IS REQUIRED FOR SOME REASON////}
-  {/////////////////////////////////////////}
-  //CodeCave := OGLBase + $A0508;
   CodeCave:=DWORD(AllocMem(8196));
-  //Swapbuff := OGLBase + $47C30;
   Swapbuff:=DWORD(GetProcAddress(GetModuleHandle('opengl32.dll'),'wglSwapBuffers'));
 
   if (VirtualProtect(LPVOID(CodeCave), 30, PAGE_EXECUTE_READWRITE, Garbage) =

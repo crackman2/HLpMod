@@ -28,6 +28,7 @@ type
   end;
 
   ArrGLint = array[0..3] of GLint;
+  PTglDrawCmds = ^TglDrawCmds;
 
 
 implementation

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
-  <Compiler Value="G:\lazarus\fpc\3.0.4\bin\i386-win32\fpc.exe" Date="1331391085"/>
-  <Params Value=" -Twin32 -MObjFPC -Scghi -CX -WR -O1 -l -vewnibq -vh- -FiG:\Script\GitHub\HLpMod\lib\i386-win32 -FuG:\Script\GitHub\HLpMod\ -FUG:\Script\GitHub\HLpMod\lib\i386-win32\ -FEG:\Script\GitHub\HLpMod\ -oG:\Script\GitHub\HLpMod\HLpMod.dll HLpMod.lpr"/>
+  <Compiler Value="G:\lazarus\fpc\3.0.4\bin\i386-win32\fpc.exe" Date="1331393133"/>
+  <Params Value=" -Twin32 -MObjFPC -Scghi -CX -WR -Os3 -Xs -l -vewnibq -vh- -FiG:\Script\GitHub\HLpMod\lib\i386-win32 -FuG:\Script\GitHub\HLpMod\ -FUG:\Script\GitHub\HLpMod\lib\i386-win32\ -FEG:\Script\GitHub\HLpMod\ -oG:\Script\GitHub\HLpMod\HLpMod.dll HLpMod.lpr"/>
 </CONFIG>

@@ -5,14 +5,14 @@ unit OGLHookMaker;
 interface
 
 uses
-  Classes, SysUtils, Windows, Main;
+  Classes, SysUtils, Windows;//, Main;
 
 type
 
   { TOGLHookMaker }
 
   TOGLHookMaker = class
-    procedure CreateHook(); stdcall;
+    procedure CreateHook(MainBit:Pointer); stdcall;
     procedure WriteJump(J_FROM: DWORD; J_TO: DWORD; J0C1: boolean); stdcall;
     procedure WriteCodeCave(Location: DWORD; addMyFunc: DWORD;
       JumpBackTo: DWORD); stdcall;
@@ -24,29 +24,30 @@ implementation
 
 { TOGLHookMaker }
 
-procedure TOGLHookMaker.CreateHook(); stdcall;
+procedure TOGLHookMaker.CreateHook(MainBit:Pointer); stdcall;
 var
-  OGLBase: DWORD;
+  //OGLBase: DWORD;
   SwapBuff: DWORD;
   CodeCave: DWORD;
   Garbage: DWORD = 0;
 begin
-  OGLBase := GetModuleHandle('OPENGL32.dll');
+  //OGLBase := GetModuleHandle('OPENGL32.dll');
   {/////////////////////////////////////////}
   {///}//Messagebox(0, PChar('OGLBase: 0x' + IntToHex(OGLBase, 8)), 'Base', 0);
   {///}{THIS IS REQUIRED FOR SOME REASON////}
   {/////////////////////////////////////////}
-  CodeCave := OGLBase + $A0508;
-  Swapbuff := OGLBase + $45E21;
+  //CodeCave := OGLBase + $A0508;
+  CodeCave:=DWORD(AllocMem(8196));
+  //Swapbuff := OGLBase + $47C30;
+  Swapbuff:=DWORD(GetProcAddress(GetModuleHandle('opengl32.dll'),'wglSwapBuffers'));
 
-
-  if (VirtualProtect(LPVOID(CodeCave), 30, PAGE_EXECUTE_WRITECOPY, Garbage) =
+  if (VirtualProtect(LPVOID(CodeCave), 30, PAGE_EXECUTE_READWRITE, Garbage) =
     longbool(0)) then
     MessageBox(0, 'Can''t change page protection for code cave', 'Error', 0);
-  if (VirtualProtect(LPVOID(Swapbuff), 5, PAGE_EXECUTE_WRITECOPY, Garbage) =
+  if (VirtualProtect(LPVOID(Swapbuff), 5, PAGE_EXECUTE_READWRITE, Garbage) =
     longbool(0)) then
     MessageBox(0, 'Can''t change page protection for wglSwapBuffers', 'Error', 0);
-  WriteCodeCave(CodeCave, DWORD(@MainBit), SwapBuff + 5);
+  WriteCodeCave(CodeCave, DWORD(MainBit), SwapBuff + 5);
   WriteJump(SwapBuff, CodeCave, False);
 end;
 
@@ -90,7 +91,6 @@ begin
   end;
   WriteJump(Location + 14, JumpBackTo, False);
 end;
-
 
 
 

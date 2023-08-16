@@ -7,7 +7,7 @@ interface
 
 
 uses
-  Classes, SysUtils, GL, glu, Windows, glDrawCmds, glxTextRender, ntlm, strutils;
+  Classes, SysUtils, GL, glu, Windows, glDrawCmds, glxTextRender, ntlm, strutils, OGLHookMaker;
 
 type
   MVPmatrix = array[0..15] of single;
@@ -50,6 +50,9 @@ procedure MainBit(); stdcall;
 var
   { --- Counter/Debug --- }
   nothing: PDWORD;
+
+  { ----- HookMaker ----- }
+  hook:TOGLHookMaker;
 
   { --- Custom Graphics --- }
   glx: TglDrawCmds; //Contains Drawing commands in a class. very dumb
@@ -106,6 +109,16 @@ begin
   { -------------------------- Counter --------------------------- }
   { -> Used to see if it's running at all as well as maybe  timing }
   nothing := PDWORD($10300);
+
+  { --------------------------- Hook ----------------------------- }
+  { -> creating hook at swapbuffers to call MainBit every frame    }
+  { -> is created when $10300 is 0                                 }
+  { -> 10300 aka "nothing" is increased to flag the state          }
+  if nothing^ = 0 then begin
+    hook:= TOGLHookMaker.Create();
+    hook.CreateHook(@MainBit);
+  end;
+
   Inc(nothing^);
 
   { ------------------ Custom Graphics Object -------------------- }
@@ -275,7 +288,7 @@ begin
 
 
   end else begin
-    MessageBox(0, 'Can''t read player values', 'Error', 0);
+    //MessageBox(0, 'Can''t read player values', 'Error', 0); //Use this only when debugging
     ExitProcess(0);
   end;
 
@@ -370,7 +383,7 @@ function glW2S(ViewMatrx: MVPmatrix; plypos: RVec3): RVec2; stdcall;
 var
   Clip: RVec4;
   NDC: RVec3;
-  viewp: array[0..3] of GLint;
+  viewp: array[0..3] of GLint = (0,0,0,0);
   depthr: array[0..1] of GLfloat;
   pycord: RVec2;
 begin

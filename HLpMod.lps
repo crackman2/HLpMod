@@ -9,7 +9,7 @@
         <Filename Value="HLpMod.lpr"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="5"/>
-        <CursorPos X="27" Y="24"/>
+        <CursorPos X="57" Y="25"/>
         <UsageCount Value="250"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -17,10 +17,8 @@
         <Filename Value="oglhookmaker.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="OGLHookMaker"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="7"/>
-        <TopLine Value="12"/>
-        <CursorPos X="5" Y="29"/>
+        <CursorPos Y="35"/>
         <UsageCount Value="250"/>
         <Loaded Value="True"/>
       </Unit1>
@@ -29,8 +27,8 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="Main"/>
         <EditorIndex Value="6"/>
-        <TopLine Value="100"/>
-        <CursorPos X="15" Y="117"/>
+        <TopLine Value="374"/>
+        <CursorPos X="41" Y="387"/>
         <UsageCount Value="250"/>
         <Loaded Value="True"/>
       </Unit2>
@@ -39,6 +37,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="glText"/>
         <EditorIndex Value="3"/>
+        <TopLine Value="45"/>
         <UsageCount Value="250"/>
         <Loaded Value="True"/>
       </Unit3>
@@ -47,7 +46,8 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="glDrawCmds"/>
         <EditorIndex Value="2"/>
-        <CursorPos X="15" Y="22"/>
+        <TopLine Value="25"/>
+        <CursorPos X="39" Y="40"/>
         <UsageCount Value="250"/>
         <Loaded Value="True"/>
       </Unit4>
@@ -55,8 +55,9 @@
         <Filename Value="glxtextrender.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="glxTextRender"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
-        <CursorPos X="61" Y="582"/>
+        <CursorPos X="25" Y="14"/>
         <UsageCount Value="216"/>
         <Loaded Value="True"/>
       </Unit5>
@@ -86,7 +87,7 @@
         <UsageCount Value="707"/>
       </Unit8>
     </Units>
-    <JumpHistory Count="7" HistoryIndex="6">
+    <JumpHistory Count="10" HistoryIndex="9">
       <Position1>
         <Filename Value="main.pas"/>
         <Caret Line="6" Column="28"/>
@@ -97,24 +98,36 @@
       </Position2>
       <Position3>
         <Filename Value="main.pas"/>
-        <Caret Line="116" Column="69" TopLine="266"/>
+        <Caret Line="119" Column="30" TopLine="98"/>
       </Position3>
       <Position4>
-        <Filename Value="main.pas"/>
-        <Caret Line="119" Column="30" TopLine="98"/>
-      </Position4>
-      <Position5>
         <Filename Value="oglhookmaker.pas"/>
         <Caret Line="50" Column="41" TopLine="33"/>
-      </Position5>
-      <Position6>
+      </Position4>
+      <Position5>
         <Filename Value="HLpMod.lpr"/>
         <Caret Line="24" Column="27"/>
+      </Position5>
+      <Position6>
+        <Filename Value="gldrawcmds.pas"/>
+        <Caret Line="43" Column="34" TopLine="24"/>
       </Position6>
       <Position7>
-        <Filename Value="main.pas"/>
-        <Caret Line="117" Column="15" TopLine="100"/>
+        <Filename Value="glxtextrender.pas"/>
+        <Caret Line="35" Column="5" TopLine="16"/>
       </Position7>
+      <Position8>
+        <Filename Value="gldrawcmds.pas"/>
+        <Caret Line="40" Column="35" TopLine="25"/>
+      </Position8>
+      <Position9>
+        <Filename Value="main.pas"/>
+        <Caret Line="386" Column="42" TopLine="377"/>
+      </Position9>
+      <Position10>
+        <Filename Value="gldrawcmds.pas"/>
+        <Caret Line="40" Column="39" TopLine="25"/>
+      </Position10>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>

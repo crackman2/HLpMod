@@ -383,8 +383,8 @@ function glW2S(ViewMatrx: MVPmatrix; plypos: RVec3): RVec2; stdcall;
 var
   Clip: RVec4;
   NDC: RVec3;
-  viewp: array[0..3] of GLint;
-  depthr: array[0..1] of GLfloat;
+  viewp: array[0..3] of GLint = (0,0,0,0);
+  depthr: array[0..1] of GLfloat = (0,0);
   pycord: RVec2;
 begin
 
